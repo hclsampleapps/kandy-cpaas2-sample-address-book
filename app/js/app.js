@@ -358,14 +358,14 @@ function searchDirectory() {
 // Fetch your own user information
 function fetchSelf() {
     client.user.fetchSelfInfo()
-    console.log('fetched self -----', document.getElementById('email').value);
+    console.log('fetched self -----', document.getElementById('userEmail').value);
 }
 
 
 // Helper function to update the contacts select list
 function updateUserList() {
     const select = document.getElementById('userDropDown')
-    const contactId = document.getElementById('id').value // created reference for contactId locally
+    // const contactId = document.getElementById('id').value // created reference for contactId locally
     select.innerHTML = ''
     const users = client.user.getAll()
     for (let userId in users) {
@@ -375,10 +375,10 @@ function updateUserList() {
             }
         }
         var opt = document.createElement('option')
-        opt.value = opt.text = contactId; // "Error: contactId was not defined"
+        opt.value = opt.text = userId; // "Error: contactId was not defined"
         select.appendChild(opt)
         if (select.options.length === 1) {
-            renderUser(userId)
+            renderUser()
         }
     }
 }
@@ -390,14 +390,16 @@ function renderUser(id) {
     if (userId != undefined && userId != "") {
         const user = client.user.get(userId)
         if (user != undefined && user != "") {
-            const userDisplay = document.getElementById('display')
-            let text = '<h5>User Info</h5>'
-            userDisplay.innerHTML = ''
-            Object.keys(user).forEach(
-                key => (text += '<li><b>' + key + '</b>: <i>' + user[key] + '</i></li>')
-            )
+            const dataString = JSON.stringify(user, null, 4);
 
-            userDisplay.innerHTML = '<ul>' + text + '</ul>';
+            const userDisplay = document.getElementById('display')
+            // let text = '<h5>User Info</h5>'
+            userDisplay.innerHTML = dataString;
+            // Object.keys(user).forEach(
+            //     key => (text += '<li><b>' + key + '</b>: <i>' + user[key] + '</i></li>')
+            // )
+
+            // userDisplay.innerHTML = '<ul>' + text + '</ul>';
         } else {
             log('User not found');
         }
