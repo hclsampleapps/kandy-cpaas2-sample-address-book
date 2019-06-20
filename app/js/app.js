@@ -378,7 +378,7 @@ function updateUserList() {
         opt.value = opt.text = userId; // "Error: contactId was not defined"
         select.appendChild(opt)
         if (select.options.length === 1) {
-            renderUser()
+            renderUser(userId)
         }
     }
 }
@@ -390,16 +390,14 @@ function renderUser(id) {
     if (userId != undefined && userId != "") {
         const user = client.user.get(userId)
         if (user != undefined && user != "") {
-            const dataString = JSON.stringify(user, null, 4);
-
             const userDisplay = document.getElementById('display')
-            // let text = '<h5>User Info</h5>'
-            userDisplay.innerHTML = dataString;
-            // Object.keys(user).forEach(
-            //     key => (text += '<li><b>' + key + '</b>: <i>' + user[key] + '</i></li>')
-            // )
+            let text = '<h5>User Info</h5>'
+            userDisplay.innerHTML = ''
+            Object.keys(user).forEach(
+                key => (text += '<li><b>' + key + '</b>: <i>' + user[key] + '</i></li>')
+            )
 
-            // userDisplay.innerHTML = '<ul>' + text + '</ul>';
+            userDisplay.innerHTML = '<ul>' + text + '</ul>';
         } else {
             log('User not found');
         }
