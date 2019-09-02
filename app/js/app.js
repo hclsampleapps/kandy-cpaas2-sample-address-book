@@ -358,14 +358,14 @@ function searchDirectory() {
 // Fetch your own user information
 function fetchSelf() {
     client.user.fetchSelfInfo()
-    console.log('fetched self -----', document.getElementById('email').value);
+    console.log('fetched self -----', document.getElementById('userEmail').value);
 }
 
 
 // Helper function to update the contacts select list
 function updateUserList() {
     const select = document.getElementById('userDropDown')
-    const contactId = document.getElementById('id').value // created reference for contactId locally
+    // const contactId = document.getElementById('id').value // created reference for contactId locally
     select.innerHTML = ''
     const users = client.user.getAll()
     for (let userId in users) {
@@ -375,7 +375,7 @@ function updateUserList() {
             }
         }
         var opt = document.createElement('option')
-        opt.value = opt.text = contactId; // "Error: contactId was not defined"
+        opt.value = opt.text = userId; // "Error: contactId was not defined"
         select.appendChild(opt)
         if (select.options.length === 1) {
             renderUser(userId)
