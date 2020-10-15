@@ -140,7 +140,8 @@ async function getTokensByPasswordGrant({
     const data = await fetchResult.json()
     return {
         accessToken: data.access_token,
-        idToken: data.id_token
+        idToken: data.id_token,
+        expiresIn: data.expires_in
     }
 }
 async function loginByPasswordGrant() {
@@ -155,7 +156,7 @@ async function loginByPasswordGrant() {
             password
         })
 
-        log('Successfully logged in as ' + userEmail)
+        log('Successfully logged in as ' + userEmail + '. Your access token will expire in ' + tokens.expiresIn/60 + ' minutes')
 
         client.setTokens(tokens)
 
@@ -190,7 +191,8 @@ async function getTokensByClientCredGrant({
 
     return {
         accessToken: data.access_token,
-        idToken: data.id_token
+        idToken: data.id_token,
+        expiresIn: data.expires_in
     }
 }
 
@@ -288,43 +290,50 @@ function getContactFormData() {
 
 
 
+
 // Helper function to update the contacts select list
-function updateContactsList() {
-    const select = document.getElementById('contactDropDown')
+function updateUserList() {
+    const select = document.getElementById('userDropDown')
     select.innerHTML = ''
-    const contacts = client.contacts.getAll()
-    for (let contactId in contacts) {
-        for (let opt of select.options) {
-            if (opt.value === contactId) {
-                select.removeChild(opt)
-            }
+    const users = client.user.getAll()
+    for (const user of users) {
+      for (let opt of select.options) {
+        if (opt.value === user.userId) {
+          select.removeChild(opt)
         }
-        var opt = document.createElement('option')
-        opt.value = opt.text = contactId
-        select.appendChild(opt)
-        if (select.options.length === 1) {
-            renderContact()
-        }
+      }
+      var opt = document.createElement('option')
+      opt.value = opt.text = user.userId
+      select.appendChild(opt)
+      if (select.options.length === 1) {
+        renderUser()
+      }
     }
-}
+  }
 
-// Helper function to render a contact and update the contact form
-function renderContact(id) {
-    const contactId = id || getSelectedContactId()
-
-    if (contactId) {
-        const contact = client.contacts.get(contactId)
-        updateContactForm(contact)
-        const contactDisplay = document.getElementById('display')
-        let text = '<h5>Contact Info</h5>'
-        contactDisplay.innerHTML = ''
-        Object.keys(contact).forEach(
-            key => (text += '<li><b>' + key + '</b>: <i>' + contact[key] + '</i></li>')
+  // Helper function to render a user and update the user display
+function renderUser(id) {
+    const userId = id || getSelectedUser()
+    console.log('Rendering user')
+    if (userId) {
+      const user = client.user.get(userId)
+      const userDataString = JSON.stringify(user, null, 4)
+      document.getElementById('display').innerHTML = userDataString
+      if (user != undefined && user != "") {
+        const userDisplay = document.getElementById('display')
+        let text = '<h5>User Info</h5>'
+        userDisplay.innerHTML = ''
+        Object.keys(user).forEach(
+            key => (text += '<li><b>' + key + '</b>: <i>' + user[key] + '</i></li>')
         )
 
-        contactDisplay.innerHTML = '<ul>' + text + '</ul>';
+        userDisplay.innerHTML = '<ul>' + text + '</ul>';
+     } else {
+        log('User not found');
+     }
     }
-}
+  }
+
 
 // Get the contact ID from the selected option in the contact select list
 function getSelectedContactId() {
@@ -367,7 +376,7 @@ function searchDirectory() {
 // Fetch your own user information
 function fetchSelf() {
     client.user.fetchSelfInfo()
-    console.log('fetched self -----', document.getElementById('email').value);
+    console.log('fetched self -----', document.getElementById('userEmail').value);
 }
 
 
