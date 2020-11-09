@@ -344,7 +344,7 @@ function updateContactForm(contact) {
     document.getElementById('emailN').value = contact.emailAddress
     document.getElementById('home-phone').value = contact.homePhoneNumber
     document.getElementById('business-phone').value = contact.businessPhoneNumber
-    document.getElementById('buddy').checked = contact.buddy === 'true'
+    document.getElementById('buddy').checked = !!contact.buddy
 }
 
 /**
