@@ -248,7 +248,7 @@ function updateContact() {
     if (!contact.contactId) {
         log('Cannot update a contact with no contact ID!')
     } else {
-        client.contacts.update(contact.contactId, contact)
+        client.contacts.update(contact)
     }
 }
 
@@ -296,18 +296,26 @@ function updateContactsList() {
     const select = document.getElementById('contactDropDown')
     select.innerHTML = ''
     const contacts = client.contacts.getAll()
-    for (let contactId in contacts) {
-        for (let opt of select.options) {
-            if (opt.value === contactId) {
-                select.removeChild(opt)
+    var count = 0 
+    for (let {} in contacts) {
+        count = count + 1;
+    }
+    if (count > 0){
+        for (let contactId in contacts) {
+            for (let opt of select.options) {
+                if (opt.value === contactId) {
+                    select.removeChild(opt)
+                }
+            }
+            var opt = document.createElement('option')
+            opt.value = opt.text = contactId
+            select.appendChild(opt)
+            if (select.options.length === 1) {
+                renderContact()
             }
         }
-        var opt = document.createElement('option')
-        opt.value = opt.text = contactId
-        select.appendChild(opt)
-        if (select.options.length === 1) {
+        } else {
             renderContact()
-        }
     }
 }
 
@@ -326,6 +334,10 @@ function renderContact(id) {
         )
 
         contactDisplay.innerHTML = '<ul>' + text + '</ul>';
+    } else {
+        const contactDisplay = document.getElementById('display')
+        contactDisplay.innerHTML = '';
+        clearContact()
     }
 }
 
@@ -344,7 +356,11 @@ function updateContactForm(contact) {
     document.getElementById('emailN').value = contact.emailAddress
     document.getElementById('home-phone').value = contact.homePhoneNumber
     document.getElementById('business-phone').value = contact.businessPhoneNumber
-    document.getElementById('buddy').checked = !!contact.buddy
+    if (contact.buddy == true || contact.buddy == "true"){
+        document.getElementById('buddy').checked = true;
+    } else {
+        document.getElementById('buddy').checked = false;
+    }
 }
 
 /**
